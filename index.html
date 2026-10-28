@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>شلم</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sheet" id="sheet">
+
+    <div class="zone left">
+
+      <div class="head">
+        <input id="name-left" placeholder="نام">
+      </div>
+      <div id="col-left"></div>
+    </div>
+
+    <div class="zone middle">
+      <div class="head">
+        <button id="reset-btn">صفحه<br>جدید</button>
+      </div>
+      <div id="col-middle"></div>
+    </div>
+
+    <div class="zone right">
+      <div class="head">
+        <input id="name-right" placeholder="نام">
+      </div>
+      <div id="col-right"></div>
+    </div>
+
+  </div>
+
+  <!-- Full-screen number entry -->
+  <div id="entry-screen" class="entry-screen" hidden>
+    <form id="number-form">
+      <h1 id="question">How much?</h1>
+
+      <input
+        id="number-input"
+        type="number"
+        placeholder=""
+        inputmode="numeric"
+        required
+        autofocus
+      >
+
+      <button type="submit" class="confirm-btn">
+        تایید
+      </button>
+
+      <button type="button" id="cancel-btn" class="cancel-btn">
+        کنسل
+      </button>
+    </form>
+  </div>
+
+  <!-- Full-screen restart confirmation -->
+  <div id="reset-screen" class="entry-screen" hidden>
+    <div id="reset-box">
+      <h1 class="reset-question">صفحه جدید ایجاد شود؟</h1>
+
+      <button type="button" id="reset-confirm" class="confirm-btn">
+        بله
+      </button>
+
+      <button type="button" id="reset-cancel" class="cancel-btn">
+        خیر
+      </button>
+    </div>
+  </div>
+
+  <!-- Full-screen delete-row confirmation -->
+  <div id="delete-screen" class="entry-screen" hidden>
+    <div id="delete-box">
+      <h1 class="reset-question">این ردیف حذف شود؟</h1>
+
+      <button type="button" id="delete-confirm" class="confirm-btn">
+        بله
+      </button>
+
+      <button type="button" id="delete-cancel" class="cancel-btn">
+        خیر
+      </button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

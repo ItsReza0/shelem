@@ -1,0 +1,395 @@
+/* ================= Variables ================= */
+
+:root {
+  --ink: #15308a;          /* ballpoint blue: text, button borders */
+  --ink-soft: #4a5ea0;     /* lighter blue: dashed lines, small numbers */
+  --ink-bold: #0a1a55;     /* dark blue: main sheet lines, totals, button ledge */
+  --col-width: 75%;        /* width of names, buttons and totals (sets the line length) */
+  --line-width: 3px;       /* thickness of all main lines */
+  --paper: #f7f9ff;        /* page and button face, a slightly blue white */
+  --ink-pale: #e6ebfa;     /* pale blue: "no" buttons */
+  --ink-red: #9c1f18;      /* red pen: destructive confirm only */
+  --ink-red-bold: #6a140f;
+  --transparency: 0.2;     /* unchanged */
+}
+
+
+/* ================= Base ================= */
+
+body {
+  margin: 0;
+  padding-bottom: 500px;  /* extra scroll space under the last round */
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: var(--ink);
+  /* background: url("test5.png") center / cover no-repeat fixed; */
+  background:
+  linear-gradient(rgba(255, 255, 255, var(--transparency)), rgba(255, 255, 255, var(--transparency))) center / cover no-repeat fixed,
+  url("test5.png") center / cover no-repeat fixed;
+}
+
+input,
+button {
+  color: var(--ink);
+  font-weight: bold;
+}
+
+/* Hide the number input's up/down arrows */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+/* ================= Buttons ================= */
+
+/* Every button: white face with a solid "ledge" that it sinks onto when pressed */
+button {
+  --ledge: 2px;
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: inherit;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 var(--ledge) 0 var(--ink-bold);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.05s, box-shadow 0.05s;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--ink-soft);
+  outline-offset: 2px;
+}
+
+button:active {
+  transform: translateY(var(--ledge));
+  box-shadow: 0 0 0 var(--ink-bold);
+}
+
+/* Small restart button in the middle header */
+#reset-btn {
+  font-size: 16px;
+  padding: 0.3em 0.7em;
+  white-space: nowrap;
+}
+
+/* Both full-screen pages: content stacked in one column */
+#number-form,
+#reset-box,
+#delete-box {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;     /* stacked, not side by side */
+  gap: 20px;
+  text-align: center;
+}
+
+/* Big buttons, full width of the column */
+#number-form button,
+#reset-box button,
+#delete-box button {
+  width: 100%;
+  padding: 22px;
+  font-size: 26px;
+  border-radius: 12px;
+}
+
+/* ================= Sheet layout ================= */
+
+
+
+.entry-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;          /* phone-safe height, ignored by older browsers */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.entry-screen[hidden] {
+  display: none !important;
+}
+
+.sheet {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+  direction: ltr;
+  min-height: 20vh;
+  position: relative;
+}
+
+
+
+
+/* Keep the team names visible while scrolling */
+.zone .head {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: white;
+}
+
+/* Keep the team name inputs visible and readable */
+.zone .head input {
+  position: relative;
+  z-index: 101;
+  background: white;
+}
+
+
+
+/* Header row: same height in all three zones so the line stays continuous */
+.head {
+  height: 10vh;
+  display: flex;
+  align-items: flex-end;
+  box-sizing: border-box;
+}
+
+.left .head  { justify-content: flex-end; }     /* name hugs the left vertical line */
+.right .head { justify-content: flex-start; }   /* name hugs the right vertical line */
+
+/* Name inputs: their underline is part of the horizontal line */
+.head input {
+  width: var(--col-width);
+  box-sizing: border-box;
+  border: 0;
+  border-bottom: var(--line-width) solid var(--ink-bold);
+  padding-bottom: 2vh;
+  text-align: center;
+  direction: rtl;
+  font-size: 26px;
+  outline: none;
+  background: none;
+}
+
+/* Middle zone: the two vertical lines and its piece of the horizontal line */
+.middle {
+  border-left: var(--line-width) solid var(--ink-bold);
+  border-right: var(--line-width) solid var(--ink-bold);
+}
+
+.middle .head {
+  align-items: center;
+  justify-content: center;
+  border-bottom: var(--line-width) solid var(--ink-bold);
+}
+
+
+/* ================= Lanes (one 10vh row per round) ================= */
+
+#col-left  { width: var(--col-width); margin-left: auto; }
+#col-right { width: var(--col-width); margin-right: auto; }
+
+.lane {
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--ink-soft);
+}
+/* The finished round's numbers sit a little higher in their lane */
+.lane-number {
+    font-weight:lighter;
+  font-size: 16px;
+  transform: translateY(-2vh);
+}
+
+.lane button {
+  font-size: 20px;
+  padding: 0.3em 1.2em;
+}
+
+/* While asking for the opponent's score: input on top, smaller button below */
+.lane.asking {
+  margin-top: 1vh;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lane.asking button {
+  --ledge: 3px;
+  font-size: 16px;
+  padding: 0.15em 0.9em;
+}
+
+.opponent-score-input {
+  width: 70px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 4px;
+  font-size: 16px;
+  text-align: center;
+  color: var(--ink-soft);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  outline: none;
+}
+
+/* Middle column: the bid number and its arrow */
+.score-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+  direction: ltr;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.score-lane > div {
+  width: 100%;
+  text-align: center;
+}
+
+
+/* ================= Delete button (right edge of the last finished row) ================= */
+
+/* Sits in the empty strip to the right of the right column, level with its row.
+   The strip is what is left of the right zone (2/5 of the sheet) after --col-width. */
+.row-actions {
+  position: absolute;
+  right: 0;
+  width: calc(0.4 * (100% - var(--col-width)));
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11;
+}
+
+.row-delete {
+  width: 28px;
+  height: 28px;
+  max-height: 80%;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  border-radius: 8px;
+  color: var(--ink-red);
+  border-color: var(--ink-red);
+  box-shadow: 0 var(--ledge) 0 var(--ink-red-bold);
+}
+
+.row-delete:active {
+  box-shadow: 0 0 0 var(--ink-red-bold);
+}
+
+/* While a round is being entered, rows can't be deleted */
+.sheet.busy .row-actions {
+  display: none;
+}
+
+
+/* ================= Round footer (dashed line + totals) ================= */
+
+.round-divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--ink-soft);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Totals sit right above each divider, in the same columns as the sheet */
+.round-total {
+  position: absolute;
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);     /* bottom edge touches the divider */
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+  direction: ltr;
+  text-align: center;
+  font-size: 22px;
+  color: var(--ink-bold);
+  pointer-events: none;
+}
+
+.total-left  { width: var(--col-width); margin-left: auto; }
+.total-right { width: var(--col-width); margin-right: auto; }
+
+
+/* ================= Full-screen overlays ================= */
+
+/* Faint ruled-paper lines behind the question */
+.entry-screen {
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 31px, var(--ink-pale) 31px 32px),
+    var(--paper);
+}
+
+#question,
+.reset-question {
+  font-size: 32px;
+  margin: 0 0 10px;
+  color: var(--ink-bold);
+}
+
+#number-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px;
+  font-size: 36px;
+  text-align: center;
+  color: var(--ink-bold);
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  outline: none;
+}
+
+#number-input:focus,
+.opponent-score-input:focus {
+  box-shadow: 0 0 0 4px rgba(27, 58, 158, 0.2);   /* soft pen-blue glow */
+}
+
+/* Yes: solid pen blue */
+.confirm-btn {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink-bold);
+}
+
+/* No: pale, outlined, clearly the quieter choice */
+.cancel-btn {
+  background: var(--ink-pale);
+  color: var(--ink);
+  border-color: var(--ink-soft);
+  box-shadow: 0 var(--ledge) 0 var(--ink-soft);
+}
+
+/* Restart / delete confirmation: red pen, because it erases something */
+#reset-confirm,
+#delete-confirm {
+  background: var(--ink-red);
+  border-color: var(--ink-red-bold);
+  box-shadow: 0 var(--ledge) 0 var(--ink-red-bold);
+}
+
+#reset-confirm:active,
+#delete-confirm:active {
+  box-shadow: 0 0 0 var(--ink-red-bold);
+}
